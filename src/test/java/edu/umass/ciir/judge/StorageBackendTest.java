@@ -34,7 +34,6 @@ public class StorageBackendTest {
   
   @Test
   public void testStuff() throws Exception {
-    StorageBackend backend = new MemStorageBackend();
     Judgment insertMe = new Judgment("user1", "q0", "doc0", "0", "");
     backend.submit(insertMe);
     Judgment user1_q0_doc0 = backend.getJudgment("user1", "q0", "doc0");
