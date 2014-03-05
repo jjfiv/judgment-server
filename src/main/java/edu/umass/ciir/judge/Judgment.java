@@ -46,6 +46,19 @@ public class Judgment {
       this.judgment = judgment;
       this.note = note;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      Value value = (Value) o;
+
+      if (judgment != null ? !judgment.equals(value.judgment) : value.judgment != null) return false;
+      if (note != null ? !note.equals(value.note) : value.note != null) return false;
+
+      return true;
+    }
   }
 
   public final Key key;
@@ -61,6 +74,25 @@ public class Judgment {
     this.value = v;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Judgment judgment = (Judgment) o;
+
+    if (!key.equals(judgment.key)) return false;
+    if (!value.equals(judgment.value)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = key.hashCode();
+    result = 31 * result + value.hashCode();
+    return result;
+  }
 
   public String toTrecQrel() {
     return String.format("%s 0 %s %s", key.qid, key.docid, value.judgment);

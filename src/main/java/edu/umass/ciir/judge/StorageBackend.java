@@ -1,8 +1,5 @@
 package edu.umass.ciir.judge;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * @author jfoley.
  */
