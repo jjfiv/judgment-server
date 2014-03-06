@@ -19,6 +19,12 @@ public class LocalDBBackend implements StorageBackend {
 
   public void open(String path) throws SQLException {
     conn = DriverManager.getConnection("jdbc:h2:" + path, "sa", "");
+    conn.prepareStatement("create table if not exists judgments (" +
+        "user varchar(64)," +
+        "qid varchar(256)," +
+        "doc varchar(256)," +
+        "judgment varchar(256)," +
+        "note varchar(1024))").executeUpdate();
   }
 
   public void close() throws SQLException {
@@ -43,10 +49,12 @@ public class LocalDBBackend implements StorageBackend {
       ResultSet rs = stmt.executeQuery();
       while(rs.next()) {
         // should only be one
-        assert(value == null) : "Expected only one judgment for user,qid,docid key";
         String judgment = rs.getString("judgment");
         String note = rs.getString("note");
-        value = new Judgment.Value(judgment, note);
+        Judgment.Value curValue = new Judgment.Value(judgment, note);
+        System.out.println(new Judgment(key, curValue));
+        assert(value == null) : "Expected only one judgment for user,qid,docid key";
+        value = curValue;
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -73,9 +81,19 @@ public class LocalDBBackend implements StorageBackend {
     }
   }
 
+  @Override
+  public void clear() {
+    try {
+      int numRows = conn.prepareStatement("delete from judgments").executeUpdate();
+      System.out.println("clear deleted "+numRows+" rows");
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   private boolean update(Judgment judgment) {
     try {
-      PreparedStatement stmt = conn.prepareStatement("update judgments set judgment=?, note=? wherewhere user=? and qid=? and doc=?");
+      PreparedStatement stmt = conn.prepareStatement("update judgments set judgment=?, note=? where user=? and qid=? and doc=?");
       stmt.setString(1, judgment.value.judgment);
       stmt.setString(2, judgment.value.note);
       stmt.setString(3, judgment.key.user);

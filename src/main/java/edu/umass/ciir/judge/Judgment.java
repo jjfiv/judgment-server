@@ -107,4 +107,8 @@ public class Judgment {
 
     return sb.toString();
   }
+  @Override
+  public String toString() {
+    return toTSV();
+  }
 }

@@ -25,4 +25,9 @@ public class MemStorageBackend implements StorageBackend {
     System.out.println("submit: "+judgment.toTSV());
     judgments.put(judgment.key, judgment.value);
   }
+
+  @Override
+  public void clear() {
+    this.judgments.clear();
+  }
 }

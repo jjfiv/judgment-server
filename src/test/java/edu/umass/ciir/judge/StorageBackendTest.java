@@ -8,9 +8,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author jfoley.
@@ -21,19 +19,24 @@ public class StorageBackendTest {
 
   public StorageBackendTest(StorageBackend sb) {
     this.backend = sb;
+    backend.clear();
   }
 
   // run these tests with all backends :)
   @Parameterized.Parameters
   public static Collection<Object[]> testParameters() throws SQLException, ClassNotFoundException {
+
     return Arrays.asList(new Object[][]{
         {new MemStorageBackend()},
-        {new LocalDBBackend("/tmp/localdbtest")}
+        {new LocalDBBackend("test-scratch/StorageBackendTest")}
     });
   }
   
   @Test
   public void testStuff() throws Exception {
+    // make sure that we can't get a judgment yet
+    assertNull(backend.getJudgment("user1", "q0", "doc0"));
+
     Judgment insertMe = new Judgment("user1", "q0", "doc0", "0", "");
     backend.submit(insertMe);
     Judgment user1_q0_doc0 = backend.getJudgment("user1", "q0", "doc0");
